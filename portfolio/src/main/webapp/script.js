@@ -12,6 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const THOUGHTS = [ 
+        'Most people are overconfident in regards to their beliefs',
+        'If you own a blender you should make hummus at least once',
+        'Fight Club, What\'s Eating Gilbert Grape and Uncut Gems are all great movies',
+        'We should focus more on ensuring our species does not go extinct' ,
+        'There is a reality that exists independently of our minds',
+        'Strong physicalism with regards to the mind has a lot of issues',
+        'While our intuition is good for spur of the moment decisions we shouldn\'t rely on it when making important life choices',
+        'People can use whichever pronouns they want' ,
+        'Punishment should be seen as a deterrent rather than a tool of justice',
+        'At least some of these thoughts are wrong',
+        '\"Follow your passion\" is bad advice'
+        ];
+
 /**
  * Given an integer n, picks a random number m such that 0 <= m < n 
  */
@@ -38,20 +52,7 @@ function writeToThoughtContainer(txt) {
  * Adds a random thought to the page.
  */
 function addRandomThought() {
-  const thoughts =
-      [ 'Most people are overconfident in regards to their beliefs'
-      , 'If you own a blender you should make hummus at least once'
-      , 'Fight Club, What\'s Eating Gilbert Grape and Uncut Gems are all great movies'
-      , 'We should focus more on ensuring our species does not go extinct' 
-      , 'There is a reality that exists independently of our minds'
-      , 'Strong physicalism with regards to the mind has a lot of issues'
-      , 'While our intuition is good for spur of the moment decisions we shouldn\'t rely on it when making important life choices'
-      , 'People can use whichever pronouns they want' 
-      , 'Punishment should be seen as a deterrent rather than a tool of justice'
-      , 'At least some of these thoughts are wrong'
-      , '\"Follow your passion\" is bad advice'];
-
-  const thought = chooseRandom(thoughts);
+  const thought = chooseRandom(THOUGHTS);
 
   writeToThoughtContainer(thought);
 }
