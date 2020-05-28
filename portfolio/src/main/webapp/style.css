@@ -41,6 +41,7 @@ button {
 #intro .line {
   margin-bottom: 1.2em;
   margin-top: 4px;
+}
 
 #intro p {
   text-align: center;
@@ -77,4 +78,6 @@ button {
   font-style: italic;
   font-weight: bold;
   margin-bottom: 0px;
+  margin-top: 1.9em;
+
 }
