@@ -10,6 +10,30 @@ body {
   text-transform: lowercase;
 }
 
+#content {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  width: 650px;
+}
+
+#headshot {
+  float: right;
+  height: auto; 
+  width: 46%;
+}
+
+.topic {
+  font-style: italic;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.intro-line {
+  margin-top: 4px;
+  margin-bottom: 1.2em;
+}
+
 button {
   background-color: var(--font-color);
   border: none;
@@ -27,29 +51,5 @@ button {
   margin: 5px 15px;
   padding-top: 30px;
   text-decoration: none;
-}
-
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  width: 650px;
-}
-
-.topic {
-  font-style: italic;
-  font-weight: bold;
-  margin-bottom: 0px;
-}
-
-.intro-line {
-  margin-top: 4px;
-  margin-bottom: 1.2em;
-}
-
-#headshot {
-  float: right;
-  height: auto; 
-  width: 46%;
 }
 
