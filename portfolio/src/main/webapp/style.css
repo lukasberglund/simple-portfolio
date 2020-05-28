@@ -43,7 +43,7 @@ button {
   margin-bottom: 0px;
 }
 
-.intro-line {
+#intro .line {
   margin-bottom: 1.2em;
   margin-top: 4px;
 }
@@ -58,7 +58,7 @@ button {
   width: var(--headshot-width);
 }
 
-#intro-text {
+#intro #text {
   background-color: var(--font-color);
   bottom: 0;
   color: var(--bg-color);
@@ -72,7 +72,7 @@ button {
   width: var(--headshot-width);
 }
 
-#intro:hover #intro-text {
+#intro:hover #text {
   opacity: 1;
 }
 
