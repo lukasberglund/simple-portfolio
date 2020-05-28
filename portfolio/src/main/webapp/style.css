@@ -1,7 +1,7 @@
 :root {
   --bg-color:rgb(245, 245, 245);
   --font-color: rgb(45,45,45);
-  --headshot-width: 46%;
+  --headshot-width: 55%;
 }
 
 body {
@@ -64,6 +64,7 @@ button {
 
 #intro p {
   margin-left: 20px;
+  margin-right: 20px;
 }
 
 .promo-link {
@@ -79,5 +80,5 @@ button {
   font-style: italic;
   font-weight: bold;
   margin-bottom: 0px;
-  margin-top: 1.7em;
+  margin-top: 2.6em;
 }
