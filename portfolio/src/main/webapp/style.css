@@ -7,7 +7,6 @@ body {
   background-color: var(--bg-color);
   color: var(--font-color);
   font-family: Helvetica, Arial, sans-serif;
-  text-align: justify;
   text-transform: lowercase;
 }
 
@@ -15,17 +14,10 @@ button {
   background-color: var(--font-color);
   border: none;
   color: var(--bg-color);
-  display: inline-block;
   font-size: 16px;
   margin-bottom: 15px;
   padding: 15px 25px;
-  text-align: center;
   text-transform: lowercase;  
-}
-
-#self-promo-links {
-  width: 100%;
-  text-align: center;    
 }
 
 .promo-link {
@@ -45,7 +37,6 @@ button {
 }
 
 .topic {
-  border-bottom: none; 
   font-style: italic;
   font-weight: bold;
   margin-bottom: 0px;
