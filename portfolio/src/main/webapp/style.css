@@ -21,15 +21,6 @@ button {
   text-transform: lowercase;  
 }
 
-.promo-link {
-  color: var(--font-color);
-  display: inline-block;
-  font-weight: bold;
-  margin: 5px 15px;
-  padding-top: 30px;
-  text-decoration: none;
-}
-
 #content {
   margin-left: auto;
   margin-right: auto;
@@ -37,15 +28,9 @@ button {
   width: 650px;
 }
 
-.topic {
-  font-style: italic;
-  font-weight: bold;
-  margin-bottom: 0px;
-}
-
-#intro .line {
-  margin-bottom: 1.2em;
-  margin-top: 4px;
+#headshot {
+  height: auto; 
+  width: var(--headshot-width);
 }
 
 #intro {
@@ -53,9 +38,12 @@ button {
   position: relative;
 }
 
-#headshot {
-  height: auto; 
-  width: var(--headshot-width);
+#intro .line {
+  margin-bottom: 1.2em;
+  margin-top: 4px;
+
+#intro p {
+  text-align: center;
 }
 
 #intro #text {
@@ -76,6 +64,17 @@ button {
   opacity: 1;
 }
 
-#intro p {
-  text-align: center;
+.promo-link {
+  color: var(--font-color);
+  display: inline-block;
+  font-weight: bold;
+  margin: 5px 15px;
+  padding-top: 30px;
+  text-decoration: none;
+}
+
+.topic {
+  font-style: italic;
+  font-weight: bold;
+  margin-bottom: 0px;
 }
