@@ -43,10 +43,6 @@ button {
   margin-top: 4px;
 }
 
-#intro p {
-  text-align: center;
-}
-
 #intro #text {
   background-color: var(--font-color);
   bottom: 0;
@@ -57,12 +53,17 @@ button {
   position: absolute;
   right: 0;
   top: 0;
+  text-align: left;
   transition: .5s ease;
   width: var(--headshot-width);
 }
 
 #intro:hover #text {
   opacity: 1;
+}
+
+#intro p {
+  margin-left: 20px;
 }
 
 .promo-link {
@@ -78,5 +79,5 @@ button {
   font-style: italic;
   font-weight: bold;
   margin-bottom: 0px;
-  margin-top: 1.9em;
+  margin-top: 1.7em;
 }
