@@ -48,14 +48,12 @@ button {
   border-bottom: none; 
   font-style: italic;
   font-weight: bold;
-  margin-bottom: none;
-  padding-bottom: none;
+  margin-bottom: 0px;
 }
 
-#introduction {
-  border-top: none;
-  margin-top: none;
-  padding-top: 2px;
+.intro-line {
+  margin-top: 4px;
+  margin-bottom: 1.2em;
 }
 
 #headshot {
