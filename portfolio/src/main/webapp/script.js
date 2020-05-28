@@ -13,16 +13,45 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Given an integer n, picks a random number m such that 0 <= m < n 
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function randInt(n) {
+    return Math.floor(Math.random() * n);
+}
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+/**
+ * Picks a random element from an array
+ */
+function chooseRandom(arr) {
+    return arr[randInt(arr.length)];
+}
 
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+/**
+ * Writes into the thought container 
+ */
+function writeToThoughtContainer(txt) {
+    const thoughtContainer = document.getElementById('thought-container');
+    thoughtContainer.innerText = txt;
+}
+
+/**
+ * Adds a random thought to the page.
+ */
+function addRandomThought() {
+  const thoughts =
+      [ 'Most people are overconfident in regards to their beliefs'
+      , 'If you own a blender you should make hummus at least once'
+      , 'Fight Club, What\'s Eating Gilbert Grape and Uncut Gems are all great movies'
+      , 'We should focus more on ensuring our species does not go extinct' 
+      , 'There is a reality that exists independently of our minds'
+      , 'Strong physicalism with regards to the mind has a lot of issues'
+      , 'While our intuition is good for spur of the moment decisions we shouldn\'t rely on it when making important life choices'
+      , 'People can use whichever pronouns they want' 
+      , 'Punishment should be seen as a deterrent rather than a tool of justice'
+      , 'At least some of these thoughts are wrong'
+      , '\"Follow your passion\" is bad advice'];
+
+  const thought = chooseRandom(thoughts);
+
+  writeToThoughtContainer(thought);
 }
