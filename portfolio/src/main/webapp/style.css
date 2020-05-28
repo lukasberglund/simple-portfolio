@@ -1,6 +1,7 @@
 :root {
-  --bg-color :rgb(245, 245, 245);
-  --font-color : rgb(45,45,45);
+  --bg-color:rgb(245, 245, 245);
+  --font-color: rgb(45,45,45);
+  --headshot-width: 46%;
 }
 
 body {
@@ -42,14 +43,40 @@ button {
   margin-bottom: 0px;
 }
 
-.intro-line {
-  margin-top: 4px;
+.intro-line 
+{
   margin-bottom: 1.2em;
+  margin-top: 4px;
+}
+
+#intro {
+  margin-bottom: 10px;
+  position: relative;
 }
 
 #headshot {
-  float: right;
   height: auto; 
-  width: 46%;
+  width: var(--headshot-width);
 }
 
+#intro-text {
+  background-color: var(--font-color);
+  bottom: 0;
+  color: var(--bg-color);
+  left: 0;
+  margin: auto;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .5s ease;
+  width: var(--headshot-width);
+}
+
+#intro:hover #intro-text {
+  opacity: 1;
+}
+
+#intro p {
+  text-align: center;
+}
