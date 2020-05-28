@@ -38,16 +38,15 @@ button {
   position: relative;
 }
 
-.intro-line {
+#intro .line {
   margin-bottom: 1.2em;
   margin-top: 4px;
-}
 
 #intro p {
   text-align: center;
 }
 
-#intro-text {
+#intro #text {
   background-color: var(--font-color);
   bottom: 0;
   color: var(--bg-color);
@@ -61,7 +60,7 @@ button {
   width: var(--headshot-width);
 }
 
-#intro:hover #intro-text {
+#intro:hover #text {
   opacity: 1;
 }
 
