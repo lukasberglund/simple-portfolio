@@ -1,7 +1,7 @@
 :root {
   --bg-color:rgb(245, 245, 245);
   --font-color: rgb(45,45,45);
-  --headshot-width: 46%;
+  --headshot-width: 55%;
 }
 
 body {
@@ -38,16 +38,12 @@ button {
   position: relative;
 }
 
-.intro-line {
+#intro .line {
   margin-bottom: 1.2em;
   margin-top: 4px;
 }
 
-#intro p {
-  text-align: center;
-}
-
-#intro-text {
+#intro #text {
   background-color: var(--font-color);
   bottom: 0;
   color: var(--bg-color);
@@ -57,12 +53,18 @@ button {
   position: absolute;
   right: 0;
   top: 0;
+  text-align: left;
   transition: .5s ease;
   width: var(--headshot-width);
 }
 
-#intro:hover #intro-text {
+#intro:hover #text {
   opacity: 1;
+}
+
+#intro p {
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .promo-link {
@@ -78,4 +80,5 @@ button {
   font-style: italic;
   font-weight: bold;
   margin-bottom: 0px;
+  margin-top: 2.6em;
 }
