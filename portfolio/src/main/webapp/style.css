@@ -2,12 +2,14 @@
   --bg-color:rgb(45,45,45);
   --font-color: rgb(245, 245, 245);
   --headshot-width: 55%;
+  --image-width: 100%;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--font-color);
   font-family: Helvetica, Arial, sans-serif;
+  text-align: center;
   text-transform: lowercase;
 }
 
@@ -18,24 +20,78 @@ button {
   font-size: 16px;
   margin-bottom: 15px;
   padding: 15px 25px;
+  text-align: center;
   text-transform: lowercase;  
 }
 
 #content {
   margin-left: auto;
   margin-right: auto;
-  text-align: center;
-  width: 650px;
+  width: 480px;
 }
 
 #headshot {
-  height: auto; 
-  width: var(--headshot-width);
+  height: auto;
+  width: var(--image-width);
 }
 
-#intro {
+.hover-card {
   margin-bottom: 10px;
   position: relative;
+}
+
+h1 {
+  font-size: 45px;
+  text-align: left;
+}
+
+
+h2 {
+  font-size: 35px;
+  text-align: left;
+}
+
+h3 {
+  font-size: 25px;
+}
+
+.hover-card {
+  margin-top: 1em;
+  margin-bottom: 2em;
+}
+
+.hover-card .description {
+  font-size: 20px;
+  line-height: 1.7;
+  text-transform: none;
+}
+
+.hover-card .image {
+  display: block;
+  margin: auto;
+  height: auto;
+  width: var(--image-width)
+}
+
+.hover-card .text {
+  background-color: var(--font-color);
+  bottom: 0;
+  box-sizing: border-box;
+  color: var(--bg-color);
+  left: 0;
+  margin: auto;
+  opacity: 0;
+  padding: 30px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-align: left;
+  transition: .5s ease;
+  width: var(--image-width);
+}
+
+.hover-card .text:hover{
+  opacity: 1;
 }
 
 #intro .line {
@@ -43,28 +99,8 @@ button {
   margin-top: 4px;
 }
 
-#intro #text {
-  background-color: var(--font-color);
-  bottom: 0;
-  color: var(--bg-color);
-  left: 0;
-  margin: auto;
-  opacity: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  text-align: left;
-  transition: .5s ease;
-  width: var(--headshot-width);
-}
-
-#intro:hover #text {
-  opacity: 1;
-}
-
-#intro p {
-  margin-left: 20px;
-  margin-right: 20px;
+#intro .text {
+  width: var(--image-width);
 }
 
 .promo-link {
@@ -80,5 +116,5 @@ button {
   font-style: italic;
   font-weight: bold;
   margin-bottom: 0px;
-  margin-top: 2.6em;
+  margin-top: 2.2em;
 }
