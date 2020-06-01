@@ -56,3 +56,13 @@ function addRandomThought() {
 
   writeToThoughtContainer(thought);
 }
+
+function addContentToContainer(content) {
+  const container = document.getElementById('content-container');
+
+  container.innerHTML = content;
+}
+
+function getContent() {
+  fetch('/data').then(response => response.text()).then(addContentToContainer);
+}
