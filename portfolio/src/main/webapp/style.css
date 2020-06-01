@@ -57,7 +57,7 @@ h3 {
 
 .hover-card {
   margin-top: 1em;
-  margin-bottom: 2em;
+  margin-bottom: 3em;
 }
 
 .hover-card .description {
@@ -85,7 +85,7 @@ h3 {
   position: absolute;
   right: 0;
   top: 0;
-  text-align: left;
+  text-align: justify;
   transition: .5s ease;
   width: var(--image-width);
 }
