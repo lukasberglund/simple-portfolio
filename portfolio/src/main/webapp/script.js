@@ -57,12 +57,28 @@ function addRandomThought() {
   writeToThoughtContainer(thought);
 }
 
+/** Creates a comment element containing text. */
+function createCommentElement(text) {
+  const comment = document.createElement('div');
+  
+  comment.className = 'comment'
+  comment.innerText = text;
+
+  return comment;
+}
+
+/** Adds array of strings to the content-container */
 function addContentToContainer(content) {
   const container = document.getElementById('content-container');
 
-  container.innerHTML = content;
+  container.innerHTML = '';
+  
+  content.forEach(str => container.appendChild(createCommentElement(str)));
 }
 
-function getContent() {
-  fetch('/data').then(response => response.text()).then(addContentToContainer);
+/** Retrieves content from server and display it */
+function getContent() {  
+  fetch('/data')
+    .then(response => response.json())
+    .then(addContentToContainer);
 }
