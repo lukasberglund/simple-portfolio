@@ -96,7 +96,7 @@ function createSubmitButton() {
 function createCommentForm() {
   const form = document.createElement('form');
 
-  form.action = '/data';
+  form.action = '/comments';
   form.method = 'POST'
   
   form.innerHTML = ''
@@ -110,9 +110,9 @@ function createCommentForm() {
   return form;
 }
 
-/** Adds array of strings to the content-container */
+/** Adds comments and comment form for the comment container */
 function addContentToContainer(content) {
-  const container = document.getElementById('content-container');
+  const container = document.getElementById('comment-container');
 
   container.innerHTML = '';
 
@@ -121,9 +121,9 @@ function addContentToContainer(content) {
   content.forEach(str => container.appendChild(createCommentElement(str)));
 }
 
-/** Retrieves content from server and display it */
-function getContent() {  
-  fetch('/data')
+/** Retrieves comments from server and displays them */
+function showComments() {  
+  fetch('/comments')
     .then(response => response.json())
     .then(addContentToContainer);
 }
