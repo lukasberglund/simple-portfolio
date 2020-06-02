@@ -67,11 +67,54 @@ function createCommentElement(text) {
   return comment;
 }
 
+function createCommentHeading() {
+  const heading = document.createElement('p');
+
+  heading.innerText = 'Post a comment'
+
+  return heading;
+}
+
+function createInputField() {
+  const field = document.createElement('input');
+
+  field.type = 'text';
+  field.name = 'new-comment';
+
+  return field;
+}
+
+function createSubmitButton() {
+  const button = document.createElement('input');
+
+  button.type = 'submit';
+
+  return button;
+}
+
+/** Creates form with which to add comments */
+function createCommentForm() {
+  const form = document.createElement('form');
+
+  form.action = 'postComment()';
+  
+  form.innerHTML = ''
+
+  form.appendChild(createCommentHeading());
+  form.appendChild(createInputField());
+  form.appendChild(document.createElement('br'));
+  form.appendChild(createSubmitButton());
+
+  return form;
+}
+
 /** Adds array of strings to the content-container */
 function addContentToContainer(content) {
   const container = document.getElementById('content-container');
 
   container.innerHTML = '';
+
+  container.appendChild(createCommentForm());
   
   content.forEach(str => container.appendChild(createCommentElement(str)));
 }
