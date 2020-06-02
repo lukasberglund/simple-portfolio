@@ -96,13 +96,15 @@ function createSubmitButton() {
 function createCommentForm() {
   const form = document.createElement('form');
 
-  form.action = 'postComment()';
+  form.action = '/data';
+  form.method = 'POST'
   
   form.innerHTML = ''
 
   form.appendChild(createCommentHeading());
   form.appendChild(createInputField());
   form.appendChild(document.createElement('br'));
+  form.appendChild(document.createElement('br'));  
   form.appendChild(createSubmitButton());
 
   return form;
