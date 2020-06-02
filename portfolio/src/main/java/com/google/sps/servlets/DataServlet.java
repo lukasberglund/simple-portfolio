@@ -38,16 +38,10 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String comment = getComment(request);
-
-    comments.add(comment);
-    response.sendRedirect("/index.html");
-  }
-
-  private String getComment(HttpServletRequest request) {
     String comment = request.getParameter("new-comment");
 
-    return comment;
+    comments.add(comment);
+    // response.sendRedirect("/index.html");
   }
 
   /**
