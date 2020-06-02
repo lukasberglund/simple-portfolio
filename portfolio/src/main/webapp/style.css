@@ -28,6 +28,10 @@ button {
   width: 480px;
 }
 
+form {
+  margin-bottom: 1em;
+}
+
 #headshot {
   height: auto;
   width: var(--image-width);
