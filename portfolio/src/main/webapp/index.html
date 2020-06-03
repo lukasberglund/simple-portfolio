@@ -11,6 +11,14 @@
     <div id="content">
       
       <h1>Lukas Berglund</h1>
+      
+      <form action="/data" method="POST">
+        <p>Post a comment</p>
+        <input type="text" name="new-comment">
+        <br/><br/>
+        <input type="submit" />
+      </form>
+
       <button onclick="getContent()"> Get content </button>
       <div id="content-container"></div>
       <div id="intro", class="hover-card">
