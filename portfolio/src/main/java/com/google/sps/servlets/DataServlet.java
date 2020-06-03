@@ -41,7 +41,7 @@ public class DataServlet extends HttpServlet {
     String comment = request.getParameter("new-comment");
 
     comments.add(comment);
-    // response.sendRedirect("/index.html");
+    response.sendRedirect("/index.html");
   }
 
   /**
