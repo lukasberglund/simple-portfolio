@@ -70,13 +70,10 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String comment = request.getParameter("new-comment");
 
+    Entity commentEntity = buildCommentEntity(comment);
+    storeEntity(commentEntity);
+
     response.sendRedirect("/index.html");
-  }
-
-  private String getComment(HttpServletRequest request) {
-    String comment = request.getParameter("new-comment");
-
-    return comment;
   }
 
   private Entity buildCommentEntity (String content) {
