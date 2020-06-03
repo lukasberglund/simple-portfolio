@@ -32,7 +32,7 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String jsonComments = convertToJSON(comments);
     
-    response.setContentType("text/json;");
+    response.setContentType("application/json;");
     response.getWriter().println(jsonComments);
   }
 
