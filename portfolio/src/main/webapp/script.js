@@ -111,14 +111,14 @@ function createCommentForm() {
 }
 
 /** Adds comments and comment form for the comment container */
-function addContentToContainer(content) {
+function addContentToContainer(comments) {
   const container = document.getElementById('comment-container');
 
   container.innerHTML = '';
 
   container.appendChild(createCommentForm());
   
-  content.forEach(str => container.appendChild(createCommentElement(str)));
+  comments.forEach(str => container.appendChild(createCommentElement(str)));
 }
 
 /** Retrieves comments from server and displays them */
