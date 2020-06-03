@@ -67,18 +67,63 @@ function createCommentElement(text) {
   return comment;
 }
 
-/** Adds array of strings to the content-container */
+function createCommentHeading() {
+  const heading = document.createElement('p');
+
+  heading.innerText = 'Post a comment'
+
+  return heading;
+}
+
+function createInputField() {
+  const field = document.createElement('input');
+
+  field.type = 'text';
+  field.name = 'new-comment';
+
+  return field;
+}
+
+function createSubmitButton() {
+  const button = document.createElement('input');
+
+  button.type = 'submit';
+
+  return button;
+}
+
+/** Creates form with which to add comments */
+function createCommentForm() {
+  const form = document.createElement('form');
+
+  form.action = '/comments';
+  form.method = 'POST'
+  
+  form.innerHTML = ''
+
+  form.appendChild(createCommentHeading());
+  form.appendChild(createInputField());
+  form.appendChild(document.createElement('br'));
+  form.appendChild(document.createElement('br'));  
+  form.appendChild(createSubmitButton());
+
+  return form;
+}
+
+/** Adds comments and comment form for the comment container */
 function addContentToContainer(content) {
-  const container = document.getElementById('content-container');
+  const container = document.getElementById('comment-container');
 
   container.innerHTML = '';
+
+  container.appendChild(createCommentForm());
   
   content.forEach(str => container.appendChild(createCommentElement(str)));
 }
 
-/** Retrieves content from server and display it */
-function getContent() {  
-  fetch('/data')
+/** Retrieves comments from server and displays them */
+function showComments() {  
+  fetch('/comments')
     .then(response => response.json())
     .then(addContentToContainer);
 }

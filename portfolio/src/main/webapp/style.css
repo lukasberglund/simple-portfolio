@@ -96,6 +96,10 @@ h3 {
   opacity: 1;
 }
 
+input {
+  margin-bottom: 10px;
+}
+
 #intro .line {
   margin-bottom: 1.2em;
   margin-top: 4px;
