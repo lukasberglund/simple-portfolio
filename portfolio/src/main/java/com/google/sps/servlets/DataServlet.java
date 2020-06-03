@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments comments */
+/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
   private List<String> comments = new ArrayList<>();
@@ -35,24 +35,18 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String jsonComments = convertToJSON(comments);
     
-    response.setContentType("text/json;");
+    response.setContentType("application/json;");
     response.getWriter().println(jsonComments);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String content = getComment(request);
+    String comment = request.getParameter("new-comment");
 
-    Entity commentEntity = buildCommentEntity(content);
+    Entity commentEntity = buildCommentEntity(comment);
     storeEntity(commentEntity);
 
     response.sendRedirect("/index.html");
-  }
-
-  private String getComment(HttpServletRequest request) {
-    String comment = request.getParameter("new-comment");
-
-    return comment;
   }
 
   private Entity buildCommentEntity (String content) {
