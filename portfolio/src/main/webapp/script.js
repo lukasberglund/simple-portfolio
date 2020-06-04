@@ -114,7 +114,7 @@ function showComments(container, comments) {
   comments.forEach(comment => container.appendChild(createCommentElement(comment)));
 }
 
-function createCommentSection() {
+function createCommentList() {
   container = document.createElement('div');
 
   container.id = 'comment-section';
@@ -132,5 +132,5 @@ function showCommentSection() {
   
   container.innerHTML = '';
   container.appendChild(createCommentForm());
-  container.appendChild(createCommentSection());
+  container.appendChild(createCommentList());
 }
