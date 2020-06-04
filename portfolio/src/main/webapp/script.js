@@ -40,6 +40,13 @@ function chooseRandom(arr) {
     return arr[randInt(arr.length)];
 }
 
+function buildElement(type, content) {
+  element = document.createElement(type, content);
+  element.innerText = content;
+
+  return element;
+}
+
 /**
  * Writes into the thought container 
  */
@@ -58,21 +65,15 @@ function addRandomThought() {
 }
 
 /** Creates a comment element containing text. */
-function createCommentElement(text) {
-  const comment = document.createElement('div');
+function createCommentElement(comment) {
+  const commentElement = document.createElement('div');
   
-  comment.className = 'comment'
-  comment.innerText = text;
+  commentElement.className = 'comment'
+  
+  commentElement.innerHTML = '';
+  commentElement.appendChild(buildElement('p', comment.content));
 
-  return comment;
-}
-
-function createCommentHeading() {
-  const heading = document.createElement('p');
-
-  heading.innerText = 'Post a comment'
-
-  return heading;
+  return commentElement;
 }
 
 function createInputField() {
@@ -101,7 +102,7 @@ function createCommentForm() {
   
   form.innerHTML = ''
 
-  form.appendChild(createCommentHeading());
+  form.appendChild(buildElement('p', 'Post a comment'));
   form.appendChild(createInputField());
   form.appendChild(document.createElement('br'));
   form.appendChild(document.createElement('br'));  
@@ -110,20 +111,28 @@ function createCommentForm() {
   return form;
 }
 
-/** Adds comments and comment form for the comment container */
-function addContentToContainer(comments) {
-  const container = document.getElementById('comment-container');
-
-  container.innerHTML = '';
-
-  container.appendChild(createCommentForm());
-  
-  comments.forEach(str => container.appendChild(createCommentElement(str)));
+/** Show a list of comment objects in the comment section */
+function showComments(container, comments) {
+  comments.forEach(comment => container.appendChild(createCommentElement(comment)));
 }
 
-/** Retrieves comments from server and displays them */
-function showComments() {  
-  fetch('/comments')
-    .then(response => response.json())
-    .then(addContentToContainer);
+function createCommentSection() {
+  container = document.createElement('div');
+
+  container.id = 'comment-section';
+  container.innerHTML = '';
+
+  fetch('/comments').then(response => response.json())
+                    .then(comments => showComments(container, comments));
+
+  return container;
+}
+
+/**Show comment section */
+function showCommentSection() {
+  container = document.getElementById('comment-container')
+  
+  container.innerHTML = '';
+  container.appendChild(createCommentForm());
+  container.appendChild(createCommentSection());
 }
