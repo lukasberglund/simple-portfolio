@@ -17,6 +17,8 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,10 +35,35 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String jsonComments = convertToJSON(comments);
+    PreparedQuery queryResult = runCommentsQuery();
+
+    List<String> comments = toCommentList(queryResult);
+
+    String jsonComments = convertToJson(comments);
     
     response.setContentType("application/json;");
     response.getWriter().println(jsonComments);
+  }
+
+  private PreparedQuery runCommentsQuery() {
+    Query query = new Query("Comment");
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    return results;
+  }
+
+  private List<String> toCommentList(PreparedQuery queryResult) {
+    List<String> comments = new ArrayList<>();
+
+    for (Entity entity : queryResult.asIterable()) {
+      String content = (String) entity.getProperty("content");
+
+      comments.add(content); 
+    }
+
+    return comments;
   }
 
   @Override
@@ -66,7 +93,7 @@ public class DataServlet extends HttpServlet {
    * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
    * the Gson library dependency to pom.xml.
    */
-  private String convertToJSON(List<String> comments) {
+  private String convertToJson(List<String> comments) {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
