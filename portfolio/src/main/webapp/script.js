@@ -95,7 +95,7 @@ function createSubmitButton() {
 function createCommentForm() {
   const form = document.createElement('form');
 
-  form.action = '/comments/new';
+  form.action = '/comment';
   form.method = 'POST'
   
   form.innerHTML = ''
@@ -120,7 +120,7 @@ function createCommentList() {
   container.id = 'comment-section';
   container.innerHTML = '';
 
-  fetch('/comments/list').then(response => response.json())
+  fetch('/comments').then(response => response.json())
                     .then(comments => showComments(container, comments));
 
   return container;

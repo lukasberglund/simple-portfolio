@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/comments/list")
-public class ListCommentsServlet extends HttpServlet {
+@WebServlet("/comments")
+public class CommentsServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
