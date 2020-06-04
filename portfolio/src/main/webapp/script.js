@@ -69,9 +69,7 @@ function createCommentElement(comment) {
   const commentElement = document.createElement('div');
   
   commentElement.className = 'comment'
-  
-  commentElement.innerHTML = '';
-  commentElement.appendChild(buildElement('p', comment.content));
+  commentElement.innerText = comment.content;
 
   return commentElement;
 }
