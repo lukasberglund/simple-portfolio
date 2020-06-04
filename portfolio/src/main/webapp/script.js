@@ -95,7 +95,7 @@ function createSubmitButton() {
 function createCommentForm() {
   const form = document.createElement('form');
 
-  form.action = '/comments';
+  form.action = '/comment';
   form.method = 'POST'
   
   form.innerHTML = ''

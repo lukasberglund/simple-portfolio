@@ -114,7 +114,8 @@ input {
   display: inline-block;
   font-weight: bold;
   margin: 5px 15px;
-  padding-top: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   text-decoration: none;
 }
 
