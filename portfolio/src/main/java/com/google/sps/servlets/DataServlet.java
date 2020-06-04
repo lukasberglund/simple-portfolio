@@ -19,7 +19,9 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.sps.data.Comment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +33,12 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
-  private List<String> comments = new ArrayList<>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     PreparedQuery queryResult = runCommentsQuery();
 
-    List<String> comments = toCommentList(queryResult);
+    List<Comment> comments = toCommentList(queryResult);
 
     String jsonComments = convertToJson(comments);
     
@@ -46,7 +47,7 @@ public class DataServlet extends HttpServlet {
   }
 
   private PreparedQuery runCommentsQuery() {
-    Query query = new Query("Comment");
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -54,13 +55,16 @@ public class DataServlet extends HttpServlet {
     return results;
   }
 
-  private List<String> toCommentList(PreparedQuery queryResult) {
-    List<String> comments = new ArrayList<>();
+  private List<Comment> toCommentList(PreparedQuery queryResult) {
+    List<Comment> comments = new ArrayList<>();
 
     for (Entity entity : queryResult.asIterable()) {
+      long id = entity.getKey().getId();
       String content = (String) entity.getProperty("content");
+      long timestamp = (long) entity.getProperty("timestamp");
 
-      comments.add(content); 
+      Comment comment = new Comment(id, content, timestamp);
+      comments.add(comment); 
     }
 
     return comments;
@@ -68,18 +72,18 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String comment = request.getParameter("new-comment");
+    Entity commentEntity = buildCommentEntity(request);
 
-    Entity commentEntity = buildCommentEntity(comment);
     storeEntity(commentEntity);
 
     response.sendRedirect("/index.html");
   }
 
-  private Entity buildCommentEntity (String content) {
+  private Entity buildCommentEntity (HttpServletRequest request) {
     Entity commentEntity = new Entity("Comment");
 
-    commentEntity.setProperty("content", content);
+    commentEntity.setProperty("content", request.getParameter("new-comment"));
+    commentEntity.setProperty("timestamp", System.currentTimeMillis());
 
     return commentEntity;
   }
@@ -93,7 +97,7 @@ public class DataServlet extends HttpServlet {
    * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
    * the Gson library dependency to pom.xml.
    */
-  private String convertToJson(List<String> comments) {
+  private String convertToJson(List<Comment> comments) {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
