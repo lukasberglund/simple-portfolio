@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Servlet that provides a list of comments */
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
 

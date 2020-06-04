@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/** Servlet that manages indidual comments*/
 @WebServlet("/comment")
 public class CommentServlet extends HttpServlet {
 
