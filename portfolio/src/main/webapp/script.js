@@ -74,63 +74,23 @@ function createCommentElement(comment) {
   return commentElement;
 }
 
-function createInputField() {
-  const field = document.createElement('input');
-
-  field.type = 'text';
-  field.name = 'new-comment';
-
-  return field;
-}
-
-function createSubmitButton() {
-  const button = document.createElement('input');
-
-  button.type = 'submit';
-
-  return button;
-}
-
-/** Creates form with which to add comments */
-function createCommentForm() {
-  const form = document.createElement('form');
-
-  form.action = '/comment';
-  form.method = 'POST'
-  
-  form.innerHTML = ''
-
-  form.appendChild(buildElement('p', 'Post a comment'));
-  form.appendChild(createInputField());
-  form.appendChild(document.createElement('br'));
-  form.appendChild(document.createElement('br'));  
-  form.appendChild(createSubmitButton());
-
-  return form;
-}
-
 /** Show a list of comment objects in the comment section */
 function showComments(container, comments) {
   comments.forEach(comment => container.appendChild(createCommentElement(comment)));
 }
 
-function createCommentList() {
-  container = document.createElement('div');
+function fetchComments() {
+  const numComments = document.getElementById("num-comments").value;
 
-  container.id = 'comment-section';
-  container.innerHTML = '';
-
-  fetch('/comments').then(response => response.json())
-                    .then(comments => showComments(container, comments));
-
-  return container;
+  return fetch('/comments?num-comments=' + numComments)
+         .then(response => response.json());
 }
 
-/**Show comment section */
-function showCommentSection() {
-  container = document.getElementById('comment-container')
+function loadComments() {
+  console.log("getting comments");
+  container = document.getElementById('comment-list')
   
   container.innerHTML = '';
-  container.appendChild(createCommentForm());
-  container.appendChild(createCommentList());
+
+  fetchComments().then(comments => showComments(container, comments));
 }
