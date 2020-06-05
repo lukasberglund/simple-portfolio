@@ -49,7 +49,7 @@ public class CommentsServlet extends HttpServlet {
     response.getWriter().println(jsonComments);
   }
 
-  private PreparedQuery runCommentsQuery() {   
+  private PreparedQuery runCommentsQuery() {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
