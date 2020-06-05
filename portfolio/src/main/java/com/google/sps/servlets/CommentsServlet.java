@@ -40,13 +40,16 @@ public class CommentsServlet extends HttpServlet {
 
     List<Comment> comments = toCommentList(queryResult);
 
+    int numComments = Integer.parseInt(request.getParameter("num-comments"));
+    comments = reduceSize(comments, numComments);
+
     String jsonComments = convertToJson(comments);
     
     response.setContentType("application/json;");
     response.getWriter().println(jsonComments);
   }
 
-  private PreparedQuery runCommentsQuery() {
+  private PreparedQuery runCommentsQuery() {   
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -68,6 +71,15 @@ public class CommentsServlet extends HttpServlet {
     }
 
     return comments;
+  }
+
+  /** Reduces the size of alist to maxSize if it is larger than maxSize*/
+  private List<Comment> reduceSize(List<Comment> comments, int maxSize) {
+    if (comments.size() > maxSize) {
+      return comments.subList(0, maxSize);
+    } else {
+      return comments;
+    }
   }
 
   /**

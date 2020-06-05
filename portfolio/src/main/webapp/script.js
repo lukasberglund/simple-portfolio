@@ -114,14 +114,20 @@ function showComments(container, comments) {
   comments.forEach(comment => container.appendChild(createCommentElement(comment)));
 }
 
+function fetchComments() {
+  const numComments = document.getElementById("num-comments").value;
+
+  return fetch('/comments?num-comments=' + numComments)
+         .then(response => response.json());
+}
+
 function createCommentList() {
   container = document.createElement('div');
 
   container.id = 'comment-section';
   container.innerHTML = '';
 
-  fetch('/comments').then(response => response.json())
-                    .then(comments => showComments(container, comments));
+  fetchComments().then(comments => showComments(container, comments));
 
   return container;
 }
