@@ -16,10 +16,11 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.io.IOException;
@@ -36,12 +37,11 @@ public class CommentsServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    PreparedQuery queryResult = runCommentsQuery();
+    int commentLimit = Integer.parseInt(request.getParameter("num-comments"));
 
-    List<Comment> comments = toCommentList(queryResult);
+    List<Entity> entities = runCommentsQuery(commentLimit);
 
-    int numComments = Integer.parseInt(request.getParameter("num-comments"));
-    comments = reduceSize(comments, numComments);
+    List<Comment> comments = toCommentList(entities);
 
     String jsonComments = convertToJson(comments);
     
@@ -49,19 +49,19 @@ public class CommentsServlet extends HttpServlet {
     response.getWriter().println(jsonComments);
   }
 
-  private PreparedQuery runCommentsQuery() {
+  private List<Entity> runCommentsQuery(int commentLimit) {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+    PreparedQuery preparedQuery = datastore.prepare(query);
 
-    return results;
+    return preparedQuery.asList(FetchOptions.Builder.withLimit(commentLimit));
   }
 
-  private List<Comment> toCommentList(PreparedQuery queryResult) {
+  private List<Comment> toCommentList(List<Entity> entities) {
     List<Comment> comments = new ArrayList<>();
 
-    for (Entity entity : queryResult.asIterable()) {
+    for (Entity entity : entities) {
       long id = entity.getKey().getId();
       String content = (String) entity.getProperty("content");
       long timestamp = (long) entity.getProperty("timestamp");
@@ -71,15 +71,6 @@ public class CommentsServlet extends HttpServlet {
     }
 
     return comments;
-  }
-
-  /** Reduces the size of alist to maxSize if it is larger than maxSize*/
-  private List<Comment> reduceSize(List<Comment> comments, int maxSize) {
-    if (comments.size() > maxSize) {
-      return comments.subList(0, maxSize);
-    } else {
-      return comments;
-    }
   }
 
   /**
