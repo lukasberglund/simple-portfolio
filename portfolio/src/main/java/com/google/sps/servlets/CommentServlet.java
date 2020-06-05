@@ -17,6 +17,8 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that manages indidual comments*/
-@WebServlet("/comment")
+@WebServlet("/comment/*")
 public class CommentServlet extends HttpServlet {
 
   @Override
@@ -48,5 +50,26 @@ public class CommentServlet extends HttpServlet {
   private void storeEntity(Entity entity) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(entity);
+  }
+
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    long commentId = getCommentId(request);
+    deleteComment(commentId);
+  }
+
+  private long getCommentId(HttpServletRequest request) {
+    String pathString = request.getPathInfo(); // everything after 'comment/'
+    String[] sections = pathString.split("/", 3);
+    String idStr = sections[1];
+    long id = Long.valueOf(idStr);
+
+    return id;
+  }
+
+  private void deleteComment(long id) {
+    Key key = KeyFactory.createKey("Comment", id);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.delete(key);
   }
 }
