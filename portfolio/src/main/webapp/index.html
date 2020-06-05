@@ -7,7 +7,7 @@
     <script src="script.js"></script>
     <link rel="icon" type="image/png" href="images/favicon.png"/>
   </head>
-  <body>
+  <body onload="loadComments()">
     <div id="content">
       
       <h1>Lukas Berglund</h1>
@@ -77,11 +77,21 @@
         <a class="promo-link" href="http://github.com/lukasberglund/"> http://github.com/lukasberglund/ </a>
         <a class="promo-link" href=https://www.linkedin.com/in/lukas-berglund/> https://www.linkedin.com/in/lukas-berglund/ </a>
       </div>
+      
+      <div id="comments">
+        <form action="/comment" method="POST">
+          <p is="Post a comment">Post a comment</p>
+          <input type="text" name="new-comment">
+          <input type="submit">
+        </form>
 
-      <button onclick="showCommentSection()"> Show comments </button>
-      <br>
-      <label for="num-comments">Number of comments</label>
-      <input type="number" id="num-comments" name="comments" min="0" value="10">
+        <div id="select-num-comments"> 
+          <label for="num-comments">Number of comments shown</label>
+          <input type="number" id="num-comments" name="comments" min="0" value="0" onchange="loadComments()">
+        </div>
+
+        <div id="comment-list"> </div>
+      </div>
       <div id="comment-container"></div>
 
     </div>
