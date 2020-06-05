@@ -64,12 +64,30 @@ function addRandomThought() {
   writeToThoughtContainer(thought);
 }
 
+function deleteComment(id) {
+  console.log("deleting comment");
+  fetch('/comment/'+ id, {method: "DELETE"});
+  location.reload();
+}
+
+function createDeleteButton(id) {
+  var button = document.createElement('button');
+
+  button.innerText = 'Delete';
+  button.addEventListener('click', () => deleteComment(id));
+
+  return button;
+}
+
 /** Creates a comment element containing text. */
 function createCommentElement(comment) {
   const commentElement = document.createElement('div');
   
   commentElement.className = 'comment'
-  commentElement.innerText = comment.content;
+  commentElement.id = comment.id;
+  commentElement.innerHTML = '';
+  commentElement.appendChild(buildElement('p', comment.content));
+  commentElement.appendChild(createDeleteButton(comment.id));
 
   return commentElement;
 }
@@ -87,10 +105,10 @@ function fetchComments() {
 }
 
 function loadComments() {
-  console.log("getting comments");
   container = document.getElementById('comment-list')
   
   container.innerHTML = '';
 
   fetchComments().then(comments => showComments(container, comments));
 }
+
