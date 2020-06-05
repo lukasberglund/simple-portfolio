@@ -57,14 +57,25 @@ public class CommentServlet extends HttpServlet {
     long commentId = getCommentId(request);
     deleteComment(commentId);
   }
-
-  private long getCommentId(HttpServletRequest request) {
-    String pathString = request.getPathInfo(); // everything after 'comment/'
+  
+  /** If a comment with the id 42 is deleted the request will be to the path 'comment/42'
+    *  getPathInfo() retrieves everything after 'comment', so in this case we would get '/42'.
+    *  We then split the string on '/' into up to three pieces, in this case it returns ["", "42"]
+    *  We then take the string at index 1 and convert it to a long.
+    */
+  private long getCommentId(HttpServletRequest request) throws IllegalArgumentException {
+    
+    String pathString = request.getPathInfo();
     String[] sections = pathString.split("/", 3);
-    String idStr = sections[1];
-    long id = Long.valueOf(idStr);
+    
+    if (sections.length < 2) {
+      throw new IllegalArgumentException("Request path '" + pathString + "' too short. Path must contain the ID of the comment to be deleted");
+    } else {
+      String idStr = sections[1];
+      long id = Long.valueOf(idStr);
 
-    return id;
+      return id;
+    }
   }
 
   private void deleteComment(long id) {
