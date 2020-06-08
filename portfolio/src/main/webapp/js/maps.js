@@ -13,7 +13,9 @@
 // limitations under the License.
 
 function createMap() {
+  const googleHQCoord = {lat: 37.422, lng: -122.084};
+
   const map = new google.maps.Map(
       document.getElementById('map'),
-      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
+      {center: googleHQCoord, zoom: 16});
 }
