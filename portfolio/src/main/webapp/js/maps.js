@@ -11,11 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+const HONG_KONG_COORD = {lat: 22.300140, lng: 114.172237};
 
 function createMap() {
-  const googleHQCoord = {lat: 37.422, lng: -122.084};
+
+  const mapOptions = {
+    center: HONG_KONG_COORD, 
+    zoom: 6,
+    mapTypeId: 'hybrid'
+    }
 
   const map = new google.maps.Map(
       document.getElementById('map'),
-      {center: googleHQCoord, zoom: 16});
+      mapOptions);
 }
