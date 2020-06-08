@@ -13,6 +13,14 @@
 // limitations under the License.
 const HONG_KONG_COORD = {lat: 22.300140, lng: 114.172237};
 
+function addMarker(map) {
+  var marker = new google.maps.Marker({
+    position: map.getCenter(),
+    map: map,
+    title: 'Hello World!',
+  });
+}
+
 function createMap() {
 
   const mapOptions = {
@@ -21,7 +29,9 @@ function createMap() {
     mapTypeId: 'hybrid'
     }
 
-  const map = new google.maps.Map(
+  var map = new google.maps.Map(
       document.getElementById('map'),
       mapOptions);
+  
+  addMarker(map);
 }
