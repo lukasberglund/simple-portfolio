@@ -18,6 +18,12 @@ function last_elem(arr) {
   return arr[arr.length - 1];
 }
 
+function setLocationLabel(location) {
+  locationLabel = document.getElementById('location-label');
+
+  locationLabel.innerText = location;
+}
+
 function updateCountry(marker) {
   var geocoder = new google.maps.Geocoder;
 
@@ -26,7 +32,7 @@ function updateCountry(marker) {
     const mostGeneralComponent = last_elem(addressComponents);
     const country = mostGeneralComponent.long_name;
 
-    marker.setLabel(country);
+    setLocationLabel(country);
   });
 }
 
