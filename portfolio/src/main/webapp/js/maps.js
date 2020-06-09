@@ -13,7 +13,6 @@
 // limitations under the License.
 
 const HONG_KONG_COORD = {lat: 22.300140, lng: 114.172237};
-const API_KEY = "AIzaSyCsMECjrLIeLiuVEYn2kxj4ORBok7kX_SI"
 
 function last_elem(arr) {
   return arr[arr.length - 1];
