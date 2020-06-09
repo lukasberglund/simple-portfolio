@@ -14,25 +14,57 @@
 
 const HONG_KONG_COORD = {lat: 22.300140, lng: 114.172237};
 
-function last_elem(arr) {
-  return arr[arr.length - 1];
-}
+var geocoder = new google.maps.Geocoder;
+var languageMap;
 
 function setLocationLabel(location) {
   locationLabel = document.getElementById('location-label');
 
-  locationLabel.innerText = location;
+  if (location == "") {
+    locationLabel.innerText = "Can't determine country";
+  } else {
+    locationLabel.innerText = location;
+  }
+}
+
+function setLanguageLabel(location) {
+  languageLabel = document.getElementById('language-label');
+
+  if (location == "") {
+    language = "Hard to tell";
+  } else {
+    language = languageMap[location];
+  }
+
+  languageLabel.innerText = 'Language spoken: ' + language;
+}
+
+function determineCountry(address) {
+  countries = Object.keys(languageMap);
+
+  for (i = 0; i < countries.length; i++) {
+    country = countries[i];
+    if (address.includes(country)) {
+      return country;
+    } 
+  }
+
+  console.log("Can't determine country for address \'" + address + "\'");
+  return "";
 }
 
 function updateCountry(marker) {
-  var geocoder = new google.maps.Geocoder;
-
-  return geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
-    const addressComponents = results[0].address_components;
-    const mostGeneralComponent = last_elem(addressComponents);
-    const country = mostGeneralComponent.long_name;
+  geocoder.geocode({'location': marker.getPosition()}, function(results, status) {
+    var country;
+    
+    if (results[0] && results[0].formatted_address) {
+      country = determineCountry(results[0].formatted_address);
+    } else {
+      country = "";
+    }
 
     setLocationLabel(country);
+    setLanguageLabel(country);
   });
 }
 
@@ -40,9 +72,11 @@ function addMarker(map) {
   var marker = new google.maps.Marker({
     position: map.getCenter(),
     map: map,
-    title: 'Hello World!',
+    draggable:true,
   });
   updateCountry(marker);
+
+  marker.addListener('dragend', function() {updateCountry(marker);});
 }
 
 function createMap() {
@@ -58,4 +92,25 @@ function createMap() {
       mapOptions);
   
   addMarker(map);
+}
+
+function toLanguageMap(arr) {
+  /** Convert an array of country objects into a map from country to language */
+  return arr.reduce((map, country) => {
+    map[country.country] = country.language;
+    return map;
+  }, {});
+}
+
+function initLanguageMap() {
+  return fetch("/country-data")
+        .then(response => response.json())
+        .then(arr => {
+          languageMap = toLanguageMap(arr);
+        });
+  
+}
+
+function init() {
+  initLanguageMap().then(createMap());
 }
