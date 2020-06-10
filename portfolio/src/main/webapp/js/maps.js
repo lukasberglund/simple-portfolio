@@ -45,6 +45,9 @@ function setLanguageLabel(country) {
 
 function determineCountry(address) {
   /** Determines country given a formatted address. Returns "" if it's unable to determine the country. */
+  
+  // The addresses tend to have values delimited by a comma and the country is usually at the 
+  // end
   countryStr = lastElem(address.split(", "));
 
   if (countryStr in languageMap) {
