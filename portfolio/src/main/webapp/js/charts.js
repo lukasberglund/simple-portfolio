@@ -44,15 +44,12 @@ function initTable() {
 
 function drawChart() {
   const data = initTable();
-  console.log('hey');
   
   const options = {
     'title' : 'Growth',
     'width' : 500,
     'height' : 400
   };
-
-  console.log(data);
 
   const chart = new google.visualization.LineChart(
       document.getElementById('chart-container'));
