@@ -17,40 +17,42 @@ const HONG_KONG_COORD = {lat: 22.300140, lng: 114.172237};
 var geocoder = new google.maps.Geocoder;
 var languageMap;
 
-function setLocationLabel(location) {
-  locationLabel = document.getElementById('location-label');
+function lastElem(arr) {
+  return arr[arr.length - 1];
+}
 
-  if (location == "") {
-    locationLabel.innerText = "Can't determine country";
+function setLocationLabel(country) {
+  countryLabel = document.getElementById('country-label');
+
+  if (country == "") {
+    countryLabel.innerText = "Can't determine country";
   } else {
-    locationLabel.innerText = location;
+    countryLabel.innerText = country;
   }
 }
 
-function setLanguageLabel(location) {
+function setLanguageLabel(country) {
   languageLabel = document.getElementById('language-label');
 
-  if (location == "") {
+  if (country == "") {
     language = "Hard to tell";
   } else {
-    language = languageMap[location];
+    language = languageMap[country];
   }
 
-  languageLabel.innerText = 'Language spoken: ' + language;
+  languageLabel.innerText = 'Official language: ' + language;
 }
 
 function determineCountry(address) {
-  countries = Object.keys(languageMap);
+  /** Determines country given a formatted address. Returns "" if it's unable to determine the country. */
+  countryStr = lastElem(address.split(", "));
 
-  for (i = 0; i < countries.length; i++) {
-    country = countries[i];
-    if (address.includes(country)) {
-      return country;
-    } 
+  if (countryStr in languageMap) {
+    return countryStr;
+  } else {
+    console.log("Can't determine country for address \'" + address + "\'");
+    return "";
   }
-
-  console.log("Can't determine country for address \'" + address + "\'");
-  return "";
 }
 
 function updateCountry(marker) {
