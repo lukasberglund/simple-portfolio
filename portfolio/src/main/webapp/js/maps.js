@@ -43,9 +43,26 @@ function setLanguageLabel(country) {
   languageLabel.innerText = 'Official language: ' + language;
 }
 
+/* Determines country given a formatted address. Returns "" if it's unable to determine the country.
+ * This method is a bit more scattershot than determineCountry(). It identify more addresses but is
+ * often innacurate.
+ */
+function determineCountryAlt(address) {
+  countries = Object.keys(languageMap);
+
+  for (i = 0; i < countries.length; i++) {
+    country = countries[i];
+    if (address.includes(country)) {
+      return country;
+    }
+  }
+
+  console.log("Can't determine country for address \'" + address + "\' using alternative method.");
+  return "";
+}
+
+/* Determines country given a formatted address. Returns "" if it's unable to determine the country. */
 function determineCountry(address) {
-  /** Determines country given a formatted address. Returns "" if it's unable to determine the country. */
-  
   // The addresses tend to have values delimited by a comma and the country is usually at the 
   // end
   countryStr = lastElem(address.split(", "));
@@ -54,7 +71,9 @@ function determineCountry(address) {
     return countryStr;
   } else {
     console.log("Can't determine country for address \'" + address + "\'");
-    return "";
+
+    // If the standard approach doesn't work, use a more scattershot approach.
+    return determineCountryAlt(address);
   }
 }
 
