@@ -14,21 +14,6 @@
 
 const GROWTH_RATE = 1.07;
 
-/** Simulate the growth of monetary wealth (e.g a stock portfolio) */
-export function addGrowth(startingValue, numCycles, data) {
-  var value = startingValue;
-  
-  data.addRow([0, value]);
-
-  for (let cycle = 1; cycle <= numCycles; cycle++) {
-    value *= GROWTH_RATE;
-
-    data.addRow([cycle, value]);
-  }
-
-  return data;
-}
-
 /** 
  *  Simulate how much money you would be donating over a career that lasts n years with 
  *  certain annual income, IF YOU INVESTED IT AND DONATED LATER.
