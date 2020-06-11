@@ -73,7 +73,7 @@ public class CountryDataServlet extends HttpServlet {
   private String[] parseLanguages(String languageCell) {
     // Sometimes there is information included in parentheses about the regions in which the languages are spoken.
     // We remove that information.
-    return removeParens(languageCell).split(" ");
+    return removeParens(removeParens(languageCell, '(', ')'), '[', ']').split(" ");
   }
 
   /* Remove parentheses along with contents from a string. E.g removeParens("My name is (this will get removed) george") => "My name is george" */
@@ -94,7 +94,7 @@ public class CountryDataServlet extends HttpServlet {
       }
 
       // Remove remaining parentheses and return.
-      return removeParens(newStr);
+      return removeParens(newStr, opener, closer);
     }
   }
 
