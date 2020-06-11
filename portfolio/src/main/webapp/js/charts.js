@@ -12,46 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { simulateDonate, simulateSave } from '/js/donate-or-save.js'
+
+const ANNUAL_DONATION = 5000;
+const NUM_YEARS = 40; // The number of years in your career.
+
 google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
+google.charts.setOnLoadCallback(init);
 
-const GROWTH_RATE = 1.07;
-
-/** Simulate the growth of monetary wealth (e.g a stock portfolio) */
-function addGrowth(startingValue, numCycles, data) {
-  var value = startingValue;
-  
-  data.addRow([0, value]);
-
-  for (cycle = 1; cycle <= numCycles; cycle++) {
-    value *= GROWTH_RATE;
-
-    data.addRow([cycle, value]);
-  }
-
-  return data;
+/** Works like the range function in python. (https://www.geeksforgeeks.org/python-range-function/) */
+function range(n) {
+  return [...Array(n).keys()];
 }
 
-function initTable() {
-  var data = new google.visualization.DataTable();
-  data.addColumn('number', 'Value');
-  data.addColumn('number', 'Year');
+/** Make a table from an arbitrary amount of columns */
+function makeRows() {
+  let columns = Array.from(arguments);
 
-  data = addGrowth(10000, 40, data);
-
-  return data;
+  return range(columns[0].length).map(index => columns.map(col => col[index]));
 }
 
-function drawChart() {
-  const data = initTable();
-  
+function initTable(rows, columnHeaders) {
+  let table = new google.visualization.DataTable();
+
+  columnHeaders.forEach(header => table.addColumn('number', header));
+  table.addRows(rows)
+
+  return table;
+}
+
+function drawChart(table) {
   const options = {
-    'title' : 'Growth',
+    'title' : 'Donating vs Saving to Donate Later',
     'width' : 500,
     'height' : 400
   };
 
   const chart = new google.visualization.LineChart(
       document.getElementById('chart-container'));
-  chart.draw(data, options);
+  chart.draw(table, options);
+}
+
+function init() {
+  let rows = makeRows(
+                range(NUM_YEARS),
+                simulateDonate(ANNUAL_DONATION, NUM_YEARS),
+                simulateSave(ANNUAL_DONATION, NUM_YEARS)
+              );
+
+  let columnHeaders = ['Year', 'Donate right away', 'Save']
+
+  let table = initTable(rows, columnHeaders);
+
+  drawChart(table);
 }
