@@ -19,13 +19,13 @@ const GROWTH_RATE = 1.07;
  *  certain annual income, IF YOU INVESTED IT AND DONATED LATER.
  */
 export function simulateSave(annualDonation, numYears) {
-  let total = 0;
+  let totalSaved = 0;
   let snapshots = new Array();
 
   for (let cycle = 0; cycle <= numYears; cycle++) {
-    snapshots.push(total);
-    total *= GROWTH_RATE;
-    total += annualDonation;
+    snapshots.push(totalSaved);
+    totalSaved *= GROWTH_RATE;
+    totalSaved += annualDonation;
     annualDonation *= GROWTH_RATE;
   }
 
