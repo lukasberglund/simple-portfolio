@@ -40,7 +40,7 @@ function setLanguageLabel(country) {
     language = languageMap[country];
   }
 
-  languageLabel.innerText = 'Official language(s): ' + language;
+  languageLabel.innerText = 'Languages commonly spoken: ' + language;
 }
 
 function determineCountry(address) {
