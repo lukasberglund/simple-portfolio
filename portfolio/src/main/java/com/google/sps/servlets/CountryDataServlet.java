@@ -45,7 +45,7 @@ public class CountryDataServlet extends HttpServlet {
       String[] cells = line.split(",");
 
       String country = parseCountry(cells[0]);
-      String language = firstWord(cells[1]);
+      String language = listNaturally(parseLanguages(cells[1]));
       
       countries.add(new Country(country, language));
     }
@@ -61,12 +61,62 @@ public class CountryDataServlet extends HttpServlet {
 
     return str.substring(0, i);
   }
+
+  /** Parse the string that belongs to the country in the corresponing cell */
   private String parseCountry(String countryCell) {
-    /** Parse the string that belongs to the country in the corresponing cell */
     
     // Some countries have footnotes at the end of their name (the data comes from Wikipedia)
     // The footnotes are in this form: Austria[10][11] 
     return countryCell.split("\\[")[0];
+  }
+
+  private String[] parseLanguages(String languageCell) {
+    // Sometimes there is information included in parentheses about the regions in which the languages are spoken.
+    // We remove that information.
+    return removeParens(removeParens(languageCell, '(', ')'), '[', ']').split(" ");
+  }
+
+  /* Remove parentheses along with contents from a string. E.g removeParens("My name is (this will get removed) george") => "My name is george" */
+  private String removeParens(String str, char opener, char closer) {
+    int openIndex = str.indexOf(opener);
+
+    if (openIndex == -1) {
+      // No opening parenthesis found.
+      return str;
+    } else {
+      int closeIndex = str.indexOf(closer);
+      
+      String newStr;
+      if (closeIndex == -1) {
+        newStr = str.substring(0, openIndex);
+      } else {
+        newStr = str.substring(0, openIndex) + str.substring(closeIndex + 1);
+      }
+
+      // Remove remaining parentheses and return.
+      return removeParens(newStr, opener, closer);
+    }
+  }
+
+  /* List an array of string naturally in a string. E.g listNaturally("one", "two", "three") => "one, two and three" */
+  private String listNaturally(String[] arr) {
+    if (arr.length == 0) {
+      return "";
+    } else if (arr.length == 1) {
+      return arr[0];
+    } else {
+      String acc = arr[0];
+      int i = 1;
+
+      while (i < arr.length - 1) {
+        acc += ", " + arr[i];
+        i++;
+      }
+
+      acc += " and " + arr[i];
+
+      return acc;
+    }
   }
 
   @Override
