@@ -23,38 +23,32 @@ import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
 public final class FindMeetingQuery {
-  /* Find all possible time ranges for a meeting */
+  /**
+  * Find all possible time ranges for a meeting. If possible find ranges where optional attendees 
+  * can also participate. If no such ranges are found, ignore optional attendees. 
+  * 
+  * @param events  a collection of all events that may be relevant
+  * @param request the meeting request that specifies optional and mandatory guests for the event 
+  *                as well as the duration of the event
+  * @return        A collection of all possible slots for the meeting. This means all the ranges 
+  *                during which all guests are available. 
+  */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     if (!request.getOptionalAttendees().isEmpty()) {
-      return queryWithOptionalAttendees(events, request);
-    } else {
-      return queryWithoutOptionalAttendees(events, request);
-    }
-  }
+      Collection<TimeRange> ranges = queryWithOptionalAttendeesAsMandatory(events, request);
 
-  /** Run a query with optional attendees. First try to find slots that work everyone, including 
-    * the optional attendees. If that fails ignore the optional attendees and find slots that work
-    * for the mandatory ones.
-    */
-  private Collection<TimeRange> queryWithOptionalAttendees(Collection<Event> events, 
-                                                           MeetingRequest request) {
-    Collection<TimeRange> ranges = queryWithOptionalAttendeesAsMandatory(events, request);
-
-    if (!ranges.isEmpty()) {
-      return ranges;
-    } 
-    
-    if (request.getAttendees().isEmpty()) {
-      // Tests specify that in this case (where there are no mandatory attendees and we can't find 
-      // a slot for the optional attendees) we should return no slots rather than the whole day.
-      return Collections.emptyList(); 
+      if (!ranges.isEmpty()) {
+        return ranges;
+      } 
+      
+      if (request.getAttendees().isEmpty()) {
+        // Tests specify that in this case (where there are no mandatory attendees and we can't 
+        // find a slot for the optional attendees) we should return no slots rather than the whole 
+        // day.
+        return Collections.emptyList(); 
+      }
     }
 
-    return queryWithoutOptionalAttendees(events, request);
-  }
-
-  private Collection<TimeRange> queryWithoutOptionalAttendees(Collection<Event> events,         
-                                                              MeetingRequest request) {
     return findAvailableTimeSlots(events, request.getAttendees(), request.getDuration());
   }
 
@@ -69,14 +63,15 @@ public final class FindMeetingQuery {
   private Collection<TimeRange> findAvailableTimeSlots(Collection<Event> events, 
                                                        Collection<String> attendees, 
                                                        long duration) {
-    Collection<Event> relevantEvents = filterUnattendedEvents(events, attendees);
+    
+    Collection<Event> relevantEvents = filterOutUnattendedEvents(events, attendees);
     
     List<TimeRange> eventTimes = 
-                          filterNestedTimeRanges(sortByStart(extractTimeRanges(relevantEvents)));
+                          filterOutNestedTimeRanges(sortByStart(extractTimeRanges(relevantEvents)));
     
-    Collection<TimeRange> inbetweenRanges = getInbetweenRanges(eventTimes);
+    Collection<TimeRange> potentialSlots = getInbetweenRanges(eventTimes);
 
-    return filterTooShort(inbetweenRanges, duration);
+    return filterTooShort(potentialSlots, duration);
   }
 
   private Collection<String> mergeCollections(Collection<String> collectionA, 
@@ -86,7 +81,7 @@ public final class FindMeetingQuery {
   }
 
   /* Filter out events that noone is attending */
-  private Collection<Event> filterUnattendedEvents(Collection<Event> events, 
+  private Collection<Event> filterOutUnattendedEvents(Collection<Event> events, 
                                                    Collection<String> attendees) {    
     return events.stream()
                  .filter(event -> hasAttendee(event, attendees))
@@ -118,7 +113,7 @@ public final class FindMeetingQuery {
    *
    * Precondition: ranges is sorted by starting time.
    */
-  private List<TimeRange> filterNestedTimeRanges(List<TimeRange> ranges) {
+  private List<TimeRange> filterOutNestedTimeRanges(List<TimeRange> ranges) {
     int i = 0;
     while (i + 1 < ranges.size()) {
       if (ranges.get(i).contains(ranges.get(i + 1))) {
@@ -136,7 +131,8 @@ public final class FindMeetingQuery {
    * Input       |--A--|   |--B--|         |---C---|
    * Return  |-1-|     |-2-|     |----3----|       |---4---|
    * 
-   * Preconditions: ranges is sorted by starting time and there are no nested events.
+   * Preconditions: - ranges is sorted by starting time 
+   *                - there are no nested events
    */
   private Collection<TimeRange> getInbetweenRanges(List<TimeRange> ranges) {
     if (ranges.isEmpty()) {
