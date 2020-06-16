@@ -26,64 +26,79 @@ public final class FindMeetingQuery {
   /* Find all possible time ranges for a meeting */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     if (!request.getOptionalAttendees().isEmpty()) {
-      return queryWithOptional(events, request);
+      return queryWithOptionalAttendees(events, request);
     } else {
-      return queryNoOptional(events, request);
+      return queryWithoutOptionalAttendees(events, request);
     }
   }
 
-  private Collection<TimeRange> queryWithOptional(Collection<Event> events, MeetingRequest request) {
-    Collection<TimeRange> ranges = queryOptionalMandatory(events, request);
+  /** Run a query with optional attendees. First try to find slots that work everyone, including 
+    * the optional attendees. If that fails ignore the optional attendees and find slots that work
+    * for the mandatory ones.
+    */
+  private Collection<TimeRange> queryWithOptionalAttendees(Collection<Event> events, 
+                                                           MeetingRequest request) {
+    Collection<TimeRange> ranges = queryWithOptionalAttendeesAsMandatory(events, request);
 
-    if (ranges.isEmpty()) {
-      if (request.getAttendees().isEmpty()) {
-        // Tests specify that in this case we should return no slots rather than the whole day.
-        return ranges; 
-      }
-      return queryOptionalRemoved(events, request);
-    } else {
+    if (!ranges.isEmpty()) {
       return ranges;
+    } 
+    
+    if (request.getAttendees().isEmpty()) {
+      // Tests specify that in this case (where there are no mandatory attendees and we can't find 
+      // a slot for the optional attendees) we should return no slots rather than the whole day.
+      return Collections.emptyList(); 
     }
+
+    return queryWithoutOptionalAttendees(events, request);
   }
 
-  private Collection<TimeRange> queryNoOptional(Collection<Event> events, MeetingRequest request) {
-    Collection<Event> relevantEvents = filterRelevant(events, request.getAttendees());
-    List<TimeRange> eventTimes = filterNested(sortByStart(collectTimeRanges(relevantEvents)));
+  private Collection<TimeRange> queryWithoutOptionalAttendees(Collection<Event> events,         
+                                                              MeetingRequest request) {
+    return findAvailableTimeSlots(events, request.getAttendees(), request.getDuration());
+  }
+
+  private Collection<TimeRange> queryWithOptionalAttendeesAsMandatory(Collection<Event> events, 
+                                                                      MeetingRequest request) {
+    Collection<String> allAttendees = mergeCollections(request.getAttendees(), 
+                                                       request.getOptionalAttendees());
+
+    return findAvailableTimeSlots(events, allAttendees, request.getDuration());
+  }
+
+  private Collection<TimeRange> findAvailableTimeSlots(Collection<Event> events, 
+                                                       Collection<String> attendees, 
+                                                       long duration) {
+    Collection<Event> relevantEvents = filterUnattendedEvents(events, attendees);
+    
+    List<TimeRange> eventTimes = 
+                          filterNestedTimeRanges(sortByStart(extractTimeRanges(relevantEvents)));
+    
     Collection<TimeRange> inbetweenRanges = getInbetweenRanges(eventTimes);
 
-    return filterTooShort(inbetweenRanges, request.getDuration());
+    return filterTooShort(inbetweenRanges, duration);
   }
 
-  private Collection<TimeRange> queryOptionalMandatory(Collection<Event> events, MeetingRequest request) {
-    Collection<String> allAttendees = mergeCollection(request.getAttendees(), request.getOptionalAttendees());
-    MeetingRequest newRequest = new MeetingRequest(allAttendees, request.getDuration());
-
-    return query(events, newRequest);
-  }
-
-  private Collection<String> mergeCollection(Collection<String> collectionA, Collection<String> collectionB) {
+  private Collection<String> mergeCollections(Collection<String> collectionA, 
+                                             Collection<String> collectionB) {
     return Stream.concat(collectionA.stream(), collectionB.stream())
                 .collect(Collectors.toList());
   }
 
-  private Collection<TimeRange> queryOptionalRemoved(Collection<Event> events, MeetingRequest request) {
-    return query(events, new MeetingRequest(request.getAttendees(), request.getDuration()));
-  }
-
-
   /* Filter out events that noone is attending */
-  private Collection<Event> filterRelevant(Collection<Event> events, Collection<String> attendees) {    
+  private Collection<Event> filterUnattendedEvents(Collection<Event> events, 
+                                                   Collection<String> attendees) {    
     return events.stream()
-                 .filter(event -> someoneAttending(event, attendees))
+                 .filter(event -> hasAttendee(event, attendees))
                  .collect(Collectors.toList());
   }
 
   /* Check if at least one of the attendees is attending the event */
-  private Boolean someoneAttending(Event event, Collection<String> attendees) {
+  private Boolean hasAttendee(Event event, Collection<String> attendees) {
     return attendees.stream().anyMatch(event.getAttendees()::contains);
   } 
 
-  private List<TimeRange> collectTimeRanges(Collection<Event> events) {
+  private List<TimeRange> extractTimeRanges(Collection<Event> events) {
     return events.stream()
                  .map(event -> event.getWhen())
                  .collect(Collectors.toList());
@@ -96,12 +111,14 @@ public final class FindMeetingQuery {
   }
 
   /**
-   * Remove timeranges that are nested in other timeranges
-   * Like so  :       |----A----|
-   *                    |--B--|
+   * Remove timeranges that are nested in other timeranges. A timerange A is nested in timerange B if 
+   * B starts earlier than A abd ends later than A. Like so:       
+   *                    |--A--|
+   *                  |----B----|
+   *
    * Precondition: ranges is sorted by starting time.
    */
-  private List<TimeRange> filterNested(List<TimeRange> ranges) {
+  private List<TimeRange> filterNestedTimeRanges(List<TimeRange> ranges) {
     int i = 0;
     while (i + 1 < ranges.size()) {
       if (ranges.get(i).contains(ranges.get(i + 1))) {
@@ -124,31 +141,26 @@ public final class FindMeetingQuery {
   private Collection<TimeRange> getInbetweenRanges(List<TimeRange> ranges) {
     if (ranges.isEmpty()) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
-    } else {
-      Collection<TimeRange> inbetweens = new ArrayList<TimeRange>();
+    } 
+    Collection<TimeRange> inbetweens = new ArrayList<TimeRange>();
 
-      TimeRange a;
-      TimeRange b;
-      TimeRange inbetween;
+    // add range for time before first event starts
+    inbetweens.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, ranges.get(0).start(), false));
 
-      // add range for time before first event starts
-      inbetween = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, ranges.get(0).start(), false);
-      inbetweens.add(inbetween);
 
-      for (int i = 0; i < ranges.size() - 1; i++) {
-        a = ranges.get(i);
-        b = ranges.get(i+1);
+    for (int i = 0; i < ranges.size() - 1; i++) {
+      TimeRange a = ranges.get(i);
+      TimeRange b = ranges.get(i + 1);
 
-        inbetween = TimeRange.fromStartEnd(a.end(), b.start(), false);
-        inbetweens.add(inbetween);  
-      }
-
-      // add range for time after last event ends
-      inbetween = TimeRange.fromStartEnd(lastElem(ranges).end(), TimeRange.END_OF_DAY, true);
-      inbetweens.add(inbetween);
-
-      return inbetweens;
+      inbetweens.add(TimeRange.fromStartEnd(a.end(), b.start(), false));  
     }
+
+    // add range for time after last event ends
+    inbetweens.add(TimeRange.fromStartEnd(ranges.get(ranges.size() - 1).end(), 
+                                          TimeRange.END_OF_DAY, 
+                                          true));
+
+    return inbetweens;
   }
 
   private Collection<TimeRange> filterTooShort(Collection<TimeRange> ranges, long minDuration) {
@@ -156,9 +168,4 @@ public final class FindMeetingQuery {
                  .filter(range -> range.duration() >= minDuration)
                  .collect(Collectors.toList());
   }
-
-  private TimeRange lastElem(List<TimeRange> list) {
-    return list.get(list.size() - 1);
-  }
-
 }
