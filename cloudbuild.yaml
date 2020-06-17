@@ -3,9 +3,3 @@
    entrypoint: mvn
    args: ['test']
    dir: 'walkthroughs/week-5-tdd/project/'
- - name: maven:3-jdk-8
-   entrypoint: mvn
-   args: ["package", "-Dmaven.test.skip=true"]
- - name: gcr.io/cloud-builders/docker
-   args: ["build", "-t", "gcr.io/bergmoney-2020/test", "--build-arg=JAR_FILE=target/hello-spring-1.0.0.jar", "."]
- images: ["gcr.io/bergmoney-2020/test"]
