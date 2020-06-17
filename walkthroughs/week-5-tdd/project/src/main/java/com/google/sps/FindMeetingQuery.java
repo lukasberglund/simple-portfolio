@@ -14,6 +14,7 @@
 
 package com.google.sps;
 
+import java.lang.Object;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +36,11 @@ public final class FindMeetingQuery {
   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     if (!request.getOptionalAttendees().isEmpty()) {
-      Collection<TimeRange> ranges = queryWithOptionalAttendeesAsMandatory(events, request);
+      Collection<TimeRange> ranges = 
+          findAvailableTimeSlots(events, 
+                                 mergeCollections(request.getAttendees(), 
+                                                  request.getOptionalAttendees()), 
+                                 request.getDuration());
 
       if (!ranges.isEmpty()) {
         return ranges;
@@ -64,45 +69,23 @@ public final class FindMeetingQuery {
                                                        Collection<String> attendees, 
                                                        long duration) {
     
-    Collection<Event> relevantEvents = filterOutUnattendedEvents(events, attendees);
+    Stream<Event> relevantEvents = events.stream().filter(event -> hasAttendee(event, attendees));
+    Stream<TimeRange> eventTimes = relevantEvents.map(event -> event.getWhen());
     
-    List<TimeRange> eventTimes = 
-                          filterOutNestedTimeRanges(sortByStart(extractTimeRanges(relevantEvents)));
-    
-    Collection<TimeRange> potentialSlots = getInbetweenRanges(eventTimes);
+    Collection<TimeRange> potentialSlots = filterTooShort(getInbetweenRanges(eventTimes), duration);
 
-    return filterTooShort(potentialSlots, duration);
+    return potentialSlots;
   }
 
   private Collection<String> mergeCollections(Collection<String> collectionA, 
                                              Collection<String> collectionB) {
     return Stream.concat(collectionA.stream(), collectionB.stream())
-                .collect(Collectors.toList());
-  }
-
-  /* Filter out events that noone is attending */
-  private Collection<Event> filterOutUnattendedEvents(Collection<Event> events, 
-                                                   Collection<String> attendees) {    
-    return events.stream()
-                 .filter(event -> hasAttendee(event, attendees))
                  .collect(Collectors.toList());
   }
 
   /* Check if at least one of the attendees is attending the event */
   private Boolean hasAttendee(Event event, Collection<String> attendees) {
     return attendees.stream().anyMatch(event.getAttendees()::contains);
-  } 
-
-  private List<TimeRange> extractTimeRanges(Collection<Event> events) {
-    return events.stream()
-                 .map(event -> event.getWhen())
-                 .collect(Collectors.toList());
-  }
-
-  private List<TimeRange> sortByStart(List<TimeRange> ranges) {
-    Collections.sort(ranges, TimeRange.ORDER_BY_START);
-
-    return ranges;
   }
 
   /**
@@ -113,7 +96,9 @@ public final class FindMeetingQuery {
    *
    * Precondition: ranges is sorted by starting time.
    */
-  private List<TimeRange> filterOutNestedTimeRanges(List<TimeRange> ranges) {
+  private List<TimeRange> filterOutNestedTimeRanges(List<TimeRange> ranges) 
+                                            throws IllegalArgumentException {
+                                        
     int i = 0;
     while (i + 1 < ranges.size()) {
       if (ranges.get(i).contains(ranges.get(i + 1))) {
@@ -132,27 +117,30 @@ public final class FindMeetingQuery {
    * Return  |-1-|     |-2-|     |----3----|       |---4---|
    * 
    * Preconditions: - ranges is sorted by starting time 
-   *                - there are no nested events
    */
-  private Collection<TimeRange> getInbetweenRanges(List<TimeRange> ranges) {
-    if (ranges.isEmpty()) {
+  private Collection<TimeRange> getInbetweenRanges(Stream<TimeRange> ranges) 
+                                                  throws IllegalArgumentException {
+    List<TimeRange> rangeList = filterOutNestedTimeRanges(ranges.sorted(TimeRange.ORDER_BY_START)
+                                                                .collect(Collectors.toList()));                                              
+    if (rangeList.isEmpty()) {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     } 
+
     Collection<TimeRange> inbetweens = new ArrayList<TimeRange>();
 
     // add range for time before first event starts
-    inbetweens.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, ranges.get(0).start(), false));
+    inbetweens.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, rangeList.get(0).start(), false));
 
 
-    for (int i = 0; i < ranges.size() - 1; i++) {
-      TimeRange a = ranges.get(i);
-      TimeRange b = ranges.get(i + 1);
+    for (int i = 0; i < rangeList.size() - 1; i++) {
+      TimeRange a = rangeList.get(i);
+      TimeRange b = rangeList.get(i + 1);
 
       inbetweens.add(TimeRange.fromStartEnd(a.end(), b.start(), false));  
     }
 
     // add range for time after last event ends
-    inbetweens.add(TimeRange.fromStartEnd(ranges.get(ranges.size() - 1).end(), 
+    inbetweens.add(TimeRange.fromStartEnd(rangeList.get(rangeList.size() - 1).end(), 
                                           TimeRange.END_OF_DAY, 
                                           true));
 
